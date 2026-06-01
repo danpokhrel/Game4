@@ -9,7 +9,8 @@ class Map extends Phaser.Scene {
         this.load.setPath('./assets/');
         this.load.image('tileset', 'visual/tileset.png');
         this.load.tilemapTiledJSON('tilemap', 'tilemap.tmj');
-        this.load.image('tank', 'visual/sprites/tankBody_green.png');
+        this.load.image('tankBody_green', 'visual/sprites/tankBody_green.png');
+        this.load.image('tankGreen_barrel1', 'visual/sprites/tankGreen_barrel1.png');
     }
 
     create() {
@@ -24,8 +25,24 @@ class Map extends Phaser.Scene {
         let spawnX = spawnObj.x + spawnObj.width / 2;
         let spawnY = spawnObj.y + spawnObj.height / 2;
 
-        this.player = this.physics.add.sprite(spawnX, spawnY, 'tank');
-        this.player.setCollideWorldBounds(false);
+        let playerTankConfig = {
+            bodySpriteKey: 'tankBody_green',
+            speed: this.PLAYER_SPEED,
+            maxHealth: 100,
+            bodyWidth: 42,
+            bodyHeight: 50,
+            turretSlots: [{
+                turretConfig: {
+                    spriteKey: 'tankGreen_barrel1',
+                    barrelEndY: -44,
+                    depth: 1
+                },
+                socketX: 0,
+                socketY: -2
+            }]
+        };
+
+        this.player = new Tank(this, spawnX, spawnY, playerTankConfig);
 
         this.cursors = this.input.keyboard.createCursorKeys();
         this.wasd = this.input.keyboard.addKeys({
@@ -72,10 +89,10 @@ class Map extends Phaser.Scene {
         if (this.cursors.up.isDown || this.wasd.up.isDown) vy -= 1;
         if (this.cursors.down.isDown || this.wasd.down.isDown) vy += 1;
 
-        if (vx !== 0 || vy !== 0) {
-            this.player.setRotation(Math.atan2(vy, vx) + Math.PI / 2);
-        }
+        this.player.move(vx, vy);
 
-        this.player.setVelocity(vx * this.PLAYER_SPEED, vy * this.PLAYER_SPEED);
+        let pointer = this.input.activePointer;
+        let worldPoint = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
+        this.player.aimTurretsAt(worldPoint.x, worldPoint.y);
     }
 }
