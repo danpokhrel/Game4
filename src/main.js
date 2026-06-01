@@ -8,7 +8,7 @@ let config = {
             debug: false
         }
     },
-    scene: []
+    scene: [Map]
 };
 
 let game = new Phaser.Game(config);
