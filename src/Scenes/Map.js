@@ -1,12 +1,15 @@
 class Map extends Phaser.Scene {
     constructor() {
         super('map');
+        this.PLAYER_SPEED = 400;
+        this.DEBUG = false;
     }
 
     preload() {
         this.load.setPath('./assets/');
         this.load.image('tileset', 'visual/tileset.png');
         this.load.tilemapTiledJSON('tilemap', 'tilemap.tmj');
+        this.load.image('tank', 'visual/sprites/tankBody_green.png');
     }
 
     create() {
@@ -21,12 +24,58 @@ class Map extends Phaser.Scene {
         let spawnX = spawnObj.x + spawnObj.width / 2;
         let spawnY = spawnObj.y + spawnObj.height / 2;
 
-        let player = this.add.rectangle(spawnX, spawnY, 64, 64, 0xff0000);
+        this.player = this.physics.add.sprite(spawnX, spawnY, 'tank');
+        this.player.setCollideWorldBounds(false);
+
+        this.cursors = this.input.keyboard.createCursorKeys();
+        this.wasd = this.input.keyboard.addKeys({
+            up: Phaser.Input.Keyboard.KeyCodes.W,
+            down: Phaser.Input.Keyboard.KeyCodes.S,
+            left: Phaser.Input.Keyboard.KeyCodes.A,
+            right: Phaser.Input.Keyboard.KeyCodes.D
+        });
+
+        let collisionObjects = map.getObjectLayer('Collision').objects;
+        this.colliders = this.physics.add.staticGroup();
+        collisionObjects.forEach((obj) => {
+            let rect = this.add.rectangle(obj.x + obj.width / 2, obj.y + obj.height / 2, obj.width, obj.height);
+            this.physics.add.existing(rect, true);
+            this.colliders.add(rect);
+            rect.setVisible(false);
+        });
+        this.physics.add.collider(this.player, this.colliders);
+
+        this.input.keyboard.on('keydown-P', () => {
+            this.DEBUG = !this.DEBUG;
+            this.physics.world.drawDebug = this.DEBUG;
+            this.physics.world.debugGraphic.clear();
+            this.physics.world.debugGraphic.setVisible(this.DEBUG);
+        });
+
+        this.physics.world.drawDebug = false;
+        this.physics.world.debugGraphic.setVisible(false);
 
         let TILE_SIZE = 128;
         let cameraWorldWidth = 16 * TILE_SIZE;
         let zoom = this.cameras.main.width / cameraWorldWidth;
         this.cameras.main.setZoom(zoom);
+        this.cameras.main.startFollow(this.player, true, 0.1, 0.1);
         this.cameras.main.centerOn(spawnX, spawnY);
+    }
+
+    update() {
+        let vx = 0;
+        let vy = 0;
+
+        if (this.cursors.left.isDown || this.wasd.left.isDown) vx -= 1;
+        if (this.cursors.right.isDown || this.wasd.right.isDown) vx += 1;
+        if (this.cursors.up.isDown || this.wasd.up.isDown) vy -= 1;
+        if (this.cursors.down.isDown || this.wasd.down.isDown) vy += 1;
+
+        if (vx !== 0 || vy !== 0) {
+            this.player.setRotation(Math.atan2(vy, vx) + Math.PI / 2);
+        }
+
+        this.player.setVelocity(vx * this.PLAYER_SPEED, vy * this.PLAYER_SPEED);
     }
 }
