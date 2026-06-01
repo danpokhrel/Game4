@@ -1,7 +1,6 @@
 class Map extends Phaser.Scene {
     constructor() {
         super('map');
-        this.PLAYER_SPEED = 400;
         this.DEBUG = false;
     }
 
@@ -9,8 +8,8 @@ class Map extends Phaser.Scene {
         this.load.setPath('./assets/');
         this.load.image('tileset', 'visual/tileset.png');
         this.load.tilemapTiledJSON('tilemap', 'tilemap.tmj');
-        this.load.image('tankBody_green', 'visual/sprites/tankBody_green.png');
-        this.load.image('tankGreen_barrel1', 'visual/sprites/tankGreen_barrel1.png');
+
+        TankBuilder.preload(this, 'medium', 'green');
     }
 
     create() {
@@ -25,24 +24,7 @@ class Map extends Phaser.Scene {
         let spawnX = spawnObj.x + spawnObj.width / 2;
         let spawnY = spawnObj.y + spawnObj.height / 2;
 
-        let playerTankConfig = {
-            bodySpriteKey: 'tankBody_green',
-            speed: this.PLAYER_SPEED,
-            maxHealth: 100,
-            bodyWidth: 42,
-            bodyHeight: 50,
-            turretSlots: [{
-                turretConfig: {
-                    spriteKey: 'tankGreen_barrel1',
-                    barrelEndY: -44,
-                    depth: 1
-                },
-                socketX: 0,
-                socketY: -2
-            }]
-        };
-
-        this.player = new Tank(this, spawnX, spawnY, playerTankConfig);
+        this.player = TankBuilder.build(this, 'medium', 'green', spawnX, spawnY);
 
         this.cursors = this.input.keyboard.createCursorKeys();
         this.wasd = this.input.keyboard.addKeys({

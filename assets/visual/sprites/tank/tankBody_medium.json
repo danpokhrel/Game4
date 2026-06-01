@@ -1,0 +1,11 @@
+{
+    "maxSpeed": 200,
+    "maxHealth": 100,
+    "turrets": [
+        {
+            "name": "barrel_standard",
+            "socketX": 0,
+            "socketY": 0
+        }
+    ]
+}

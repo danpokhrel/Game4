@@ -6,6 +6,7 @@ class Tank extends Phaser.Physics.Arcade.Sprite {
         this.maxHealth = config.maxHealth || 100;
         this.health = this.maxHealth;
         this.speed = config.speed || 200;
+        this.rotationOffset = config.rotationOffset != null ? config.rotationOffset : SpriteFacing.DOWN;
         this.turretEntries = [];
 
         scene.add.existing(this);
@@ -38,7 +39,7 @@ class Tank extends Phaser.Physics.Arcade.Sprite {
 
     move(vx, vy) {
         if (vx !== 0 || vy !== 0) {
-            this.setRotation(Math.atan2(vy, vx) + Math.PI / 2);
+            this.setRotation(Math.atan2(vy, vx) + this.rotationOffset);
         }
         this.setVelocity(vx * this.speed, vy * this.speed);
     }
