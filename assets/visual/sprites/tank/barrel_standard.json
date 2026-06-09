@@ -3,6 +3,7 @@
     "socketY": -30,
     "barrelX": 0,
     "barrelY": 0,
+    "angleLimit": 120,
     "bullet": "bullet_standard",
     "shot": "shotThin"
 }

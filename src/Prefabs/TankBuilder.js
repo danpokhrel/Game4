@@ -31,6 +31,7 @@ class TankBuilder {
                         spriteOffsetY: -(barrelDef.socketY || 0),
                         barrelEndX: (barrelDef.barrelX || 0) - (barrelDef.socketX || 0),
                         barrelEndY: (barrelDef.barrelY || 0) - (barrelDef.socketY || 0),
+                        angleLimit: barrelDef.angleLimit != null ? Phaser.Math.DegToRad(barrelDef.angleLimit) : null,
                         bulletKey: `${barrelDef.bullet}_${color}`,
                         shotKey: barrelDef.shot,
                         rotationOffset: SpriteFacing.DOWN,

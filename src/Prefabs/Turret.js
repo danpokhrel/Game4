@@ -7,6 +7,7 @@ class Turret extends Phaser.GameObjects.Container {
         this.shotKey = config.shotKey || null;
         this.rotationOffset = config.rotationOffset != null ? config.rotationOffset : SpriteFacing.DOWN;
         this.bulletRotationOffset = config.bulletRotationOffset != null ? config.bulletRotationOffset : SpriteFacing.UP;
+        this.angleLimit = config.angleLimit || null;
 
         this.sprite = scene.add.image(config.spriteOffsetX || 0, config.spriteOffsetY || 0, config.spriteKey);
         this.add(this.sprite);
@@ -16,9 +17,17 @@ class Turret extends Phaser.GameObjects.Container {
         scene.add.existing(this);
     }
 
-    aimAt(worldX, worldY) {
+    aimAt(worldX, worldY, tankRotation) {
         let angle = Phaser.Math.Angle.Between(this.x, this.y, worldX, worldY);
-        this.setRotation(angle + this.rotationOffset);
+        let targetRotation = angle + this.rotationOffset;
+
+        if (this.angleLimit != null && tankRotation != null) {
+            let offset = Phaser.Math.Angle.Wrap(targetRotation - tankRotation);
+            offset = Phaser.Math.Clamp(offset, -this.angleLimit, this.angleLimit);
+            targetRotation = tankRotation + offset;
+        }
+
+        this.setRotation(targetRotation);
     }
 
     getFireWorldPosition() {

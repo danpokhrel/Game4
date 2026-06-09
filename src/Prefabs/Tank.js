@@ -46,7 +46,7 @@ class Tank extends Phaser.Physics.Arcade.Sprite {
 
     aimTurretsAt(worldX, worldY) {
         this.turretEntries.forEach((entry) => {
-            entry.turret.aimAt(worldX, worldY);
+            entry.turret.aimAt(worldX, worldY, this.rotation);
         });
     }
 
