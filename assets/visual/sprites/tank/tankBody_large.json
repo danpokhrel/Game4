@@ -1,0 +1,17 @@
+{
+    "maxSpeed": 100,
+    "maxHealth": 400,
+    "turrets": [
+        {
+            "name": "barrel_specialD",
+            "socketX": 20,
+            "socketY": -20
+        },
+        {
+            "name": "barrel_specialD",
+            "socketX": -20,
+            "socketY": -20,
+            "flipX": true
+        }
+    ]
+}

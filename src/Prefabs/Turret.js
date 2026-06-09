@@ -10,6 +10,7 @@ class Turret extends Phaser.GameObjects.Container {
         this.angleLimit = config.angleLimit || null;
 
         this.sprite = scene.add.image(config.spriteOffsetX || 0, config.spriteOffsetY || 0, config.spriteKey);
+        if (config.flipX) this.sprite.setFlipX(true);
         this.add(this.sprite);
 
         this.setDepth(config.depth || 1);
@@ -17,8 +18,8 @@ class Turret extends Phaser.GameObjects.Container {
         scene.add.existing(this);
     }
 
-    aimAt(worldX, worldY, tankRotation) {
-        let angle = Phaser.Math.Angle.Between(this.x, this.y, worldX, worldY);
+    aimAt(worldX, worldY, tankRotation, tankX, tankY) {
+        let angle = Phaser.Math.Angle.Between(tankX, tankY, worldX, worldY);
         let targetRotation = angle + this.rotationOffset;
 
         if (this.angleLimit != null && tankRotation != null) {

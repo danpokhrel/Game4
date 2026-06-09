@@ -9,7 +9,7 @@ class Map extends Phaser.Scene {
         this.load.image('tileset', 'visual/tileset.png');
         this.load.tilemapTiledJSON('tilemap', 'tilemap.tmj');
 
-        TankBuilder.preload(this, 'medium', 'green');
+        TankBuilder.preload(this, 'large', 'dark');
     }
 
     create() {
@@ -24,7 +24,7 @@ class Map extends Phaser.Scene {
         let spawnX = spawnObj.x + spawnObj.width / 2;
         let spawnY = spawnObj.y + spawnObj.height / 2;
 
-        this.player = TankBuilder.build(this, 'medium', 'green', spawnX, spawnY);
+        this.player = TankBuilder.build(this, 'large', 'dark', spawnX, spawnY);
 
         this.cursors = this.input.keyboard.createCursorKeys();
         this.wasd = this.input.keyboard.addKeys({
