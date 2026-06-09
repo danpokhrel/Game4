@@ -61,6 +61,22 @@ class Tank extends Phaser.Physics.Arcade.Sprite {
             turret.x = this.x + socketX * cos - socketY * sin;
             turret.y = this.y + socketX * sin + socketY * cos;
         });
+
+        if (this.debugGraphics) {
+            this.debugGraphics.clear();
+            this.turretEntries.forEach((entry) => {
+                let { turret } = entry;
+                let tCos = Math.cos(turret.rotation);
+                let tSin = Math.sin(turret.rotation);
+                let bx = turret.x + turret.barrelEnd.x * tCos - turret.barrelEnd.y * tSin;
+                let by = turret.y + turret.barrelEnd.x * tSin + turret.barrelEnd.y * tCos;
+
+                this.debugGraphics.fillStyle(0x00ff00, 1);
+                this.debugGraphics.fillCircle(turret.x, turret.y, 4);
+                this.debugGraphics.fillStyle(0xff0000, 1);
+                this.debugGraphics.fillCircle(bx, by, 4);
+            });
+        }
     }
 
     damage(amount) {
@@ -71,7 +87,19 @@ class Tank extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
+    setDebug(enabled) {
+        if (enabled && !this.debugGraphics) {
+            this.debugGraphics = this.scene.add.graphics();
+            this.debugGraphics.setDepth(2);
+        }
+        if (!enabled && this.debugGraphics) {
+            this.debugGraphics.destroy();
+            this.debugGraphics = null;
+        }
+    }
+
     destroy(fromScene) {
+        if (this.debugGraphics) this.debugGraphics.destroy();
         this.turretEntries.forEach((entry) => entry.turret.destroy(fromScene));
         this.turretEntries = [];
         super.destroy(fromScene);

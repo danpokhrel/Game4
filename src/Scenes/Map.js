@@ -49,6 +49,7 @@ class Map extends Phaser.Scene {
             this.physics.world.drawDebug = this.DEBUG;
             this.physics.world.debugGraphic.clear();
             this.physics.world.debugGraphic.setVisible(this.DEBUG);
+            this.player.setDebug(this.DEBUG);
         });
 
         this.physics.world.drawDebug = false;
