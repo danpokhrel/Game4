@@ -21,12 +21,4 @@ class BulletGroup {
             this.scene.events.emit('bulletimpact', x, y);
         });
     }
-
-    cleanupOutOfBounds(bounds) {
-        this.group.children.each((bullet) => {
-            if (bullet.active && !bounds.contains(bullet.x, bullet.y)) {
-                bullet.destroy();
-            }
-        });
-    }
 }

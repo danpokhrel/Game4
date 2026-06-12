@@ -12,9 +12,9 @@ class PlayerController {
             right: Phaser.Input.Keyboard.KeyCodes.D
         });
 
-        scene.input.on('pointerdown', () => {
-            this.tank.fire(this.bulletGroup);
-        });
+        this.firing = false;
+        scene.input.on('pointerdown', () => { this.firing = true; });
+        scene.input.on('pointerup', () => { this.firing = false; });
     }
 
     update() {
@@ -31,5 +31,9 @@ class PlayerController {
         let pointer = this.scene.input.activePointer;
         let worldPoint = this.scene.cameras.main.getWorldPoint(pointer.x, pointer.y);
         this.tank.aimTurretsAt(worldPoint.x, worldPoint.y);
+
+        if (this.firing) {
+            this.tank.fire(this.bulletGroup);
+        }
     }
 }

@@ -4,6 +4,8 @@
     "barrelX": -5,
     "barrelY": 35,
     "angleLimit": 10,
-    "bullet": "bullet_standard",
-    "shot": "shotThin"
+    "bullet": "bullet_long",
+    "shot": "shotRed",
+    "bulletSpeed": 400,
+    "reloadTime": 2
 }

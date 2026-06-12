@@ -47,6 +47,7 @@ class TankBuilder {
                         bulletKey: `${barrelDef.bullet}_${color}`,
                         shotKey: barrelDef.shot,
                         bulletSpeed: barrelDef.bulletSpeed || 400,
+                        reloadTime: barrelDef.reloadTime || 1,
                         rotationOffset: barrelDef.rotationOffset != null ? barrelDef.rotationOffset : SpriteFacing.DOWN,
                         bulletRotationOffset: barrelDef.bulletRotationOffset != null ? barrelDef.bulletRotationOffset : SpriteFacing.UP,
                         depth: barrelDef.depth || 1

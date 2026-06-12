@@ -18,6 +18,5 @@ class TankManager {
     }
 
     update() {
-        this.bulletGroup.cleanupOutOfBounds(this.scene.mapBounds);
     }
 }

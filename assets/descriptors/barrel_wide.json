@@ -5,5 +5,7 @@
     "barrelY": 30,
     "angleLimit": 120,
     "bullet": "bullet_wide",
-    "shot": "shotThin"
+    "shot": "shotThin",
+    "bulletSpeed": 400,
+    "reloadTime": 1
 }
