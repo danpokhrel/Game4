@@ -1,21 +1,22 @@
 class TankBuilder {
     static preload(scene, bodyType, color) {
-        let basePath = 'visual/sprites/tank/';
+        let spritePath = 'visual/sprites/tank/';
+        let descPath = 'descriptors/';
         let bodyDefKey = `def_${bodyType}`;
 
-        scene.load.json(bodyDefKey, `${basePath}tankBody_${bodyType}.json`);
-        scene.load.image(`tankBody_${bodyType}_${color}`, `${basePath}tankBody_${bodyType}_${color}.png`);
+        scene.load.json(bodyDefKey, `${descPath}tankBody_${bodyType}.json`);
+        scene.load.image(`tankBody_${bodyType}_${color}`, `${spritePath}tankBody_${bodyType}_${color}.png`);
 
         scene.load.once(`filecomplete-json-${bodyDefKey}`, () => {
             let bodyDef = scene.cache.json.get(bodyDefKey);
             let uniqueNames = [...new Set(bodyDef.turrets.map(t => t.name))];
             uniqueNames.forEach((name) => {
-                scene.load.json(`def_${name}`, `${basePath}${name}.json`);
-                scene.load.image(`${name}_${color}`, `${basePath}${name}_${color}.png`);
+                scene.load.json(`def_${name}`, `${descPath}${name}.json`);
+                scene.load.image(`${name}_${color}`, `${spritePath}${name}_${color}.png`);
 
                 scene.load.once(`filecomplete-json-def_${name}`, () => {
                     let barrelDef = scene.cache.json.get(`def_${name}`);
-                    scene.load.image(`${barrelDef.bullet}_${color}`, `${basePath}${barrelDef.bullet}_${color}.png`);
+                    scene.load.image(`${barrelDef.bullet}_${color}`, `${spritePath}${barrelDef.bullet}_${color}.png`);
                     scene.load.image(barrelDef.shot, `visual/sprites/${barrelDef.shot}.png`);
                 });
             });

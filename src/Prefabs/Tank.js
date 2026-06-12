@@ -7,7 +7,7 @@ class Tank extends Phaser.Physics.Arcade.Sprite {
         this.health = this.maxHealth;
         this.speed = config.speed || 200;
         this.acceleration = config.acceleration || null;
-        this.turnSpeed = config.turnSpeed || 80;
+        this.turnSpeed = this.speed * 0.5;
         this.turretEntries = [];
 
         scene.add.existing(this);

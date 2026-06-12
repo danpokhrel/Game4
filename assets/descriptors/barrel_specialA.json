@@ -1,0 +1,9 @@
+{
+    "socketX": 0,
+    "socketY": -10,
+    "barrelX": 0,
+    "barrelY": 30,
+    "angleLimit": 60,
+    "bullet": "bullet_standard",
+    "shot": "shotThin"
+}
