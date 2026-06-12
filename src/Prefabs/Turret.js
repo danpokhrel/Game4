@@ -49,7 +49,7 @@ class Turret extends Phaser.GameObjects.Container {
         let pos = this.getFireWorldPosition();
         let direction = this.rotation - this.rotationOffset;
 
-        let bullet = bulletGroup.create(pos.x, pos.y, this.bulletKey);
+        let bullet = bulletGroup.group.create(pos.x, pos.y, this.bulletKey);
         bullet.setDepth(2);
         bullet.setRotation(pos.rotation);
         bullet.setVelocity(Math.cos(direction) * this.bulletSpeed, Math.sin(direction) * this.bulletSpeed);
