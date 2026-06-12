@@ -12,6 +12,12 @@ class TankBuilder {
             uniqueNames.forEach((name) => {
                 scene.load.json(`def_${name}`, `${basePath}${name}.json`);
                 scene.load.image(`${name}_${color}`, `${basePath}${name}_${color}.png`);
+
+                scene.load.once(`filecomplete-json-def_${name}`, () => {
+                    let barrelDef = scene.cache.json.get(`def_${name}`);
+                    scene.load.image(`${barrelDef.bullet}_${color}`, `${basePath}${barrelDef.bullet}_${color}.png`);
+                    scene.load.image(barrelDef.shot, `visual/sprites/${barrelDef.shot}.png`);
+                });
             });
         });
     }
@@ -39,6 +45,7 @@ class TankBuilder {
                         flipX: flipX,
                         bulletKey: `${barrelDef.bullet}_${color}`,
                         shotKey: barrelDef.shot,
+                        bulletSpeed: barrelDef.bulletSpeed || 400,
                         rotationOffset: barrelDef.rotationOffset != null ? barrelDef.rotationOffset : SpriteFacing.DOWN,
                         bulletRotationOffset: barrelDef.bulletRotationOffset != null ? barrelDef.bulletRotationOffset : SpriteFacing.UP,
                         depth: barrelDef.depth || 1

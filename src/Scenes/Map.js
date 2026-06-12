@@ -10,6 +10,10 @@ class Map extends Phaser.Scene {
         this.load.tilemapTiledJSON('tilemap', 'tilemap.tmj');
 
         TankBuilder.preload(this, 'large', 'dark');
+
+        for (let i = 1; i <= 5; i++) {
+            this.load.image(`explosion${i}`, `visual/sprites/explosion${i}.png`);
+        }
     }
 
     create() {
@@ -18,6 +22,8 @@ class Map extends Phaser.Scene {
 
         let ground = map.createLayer('Ground', tileset);
         let foreground = map.createLayer('Foreground', tileset);
+
+        this.mapBounds = new Phaser.Geom.Rectangle(0, 0, map.widthInPixels, map.heightInPixels);
 
         let spawnLayer = map.getObjectLayer('PlayerSpawn');
         let spawnObj = spawnLayer.objects[0];
@@ -43,6 +49,26 @@ class Map extends Phaser.Scene {
             rect.setVisible(false);
         });
         this.physics.add.collider(this.player, this.colliders);
+
+        this.bullets = this.physics.add.group({ allowGravity: false });
+        this.anims.create({
+            key: 'explosion',
+            frames: [1, 2, 3, 4, 5].map(i => ({ key: `explosion${i}` })),
+            frameRate: 20,
+            hideOnComplete: true
+        });
+
+        this.physics.add.collider(this.bullets, this.colliders, (bullet) => {
+            let x = bullet.x;
+            let y = bullet.y;
+            bullet.destroy();
+            let explosion = this.add.sprite(x, y, 'explosion1').play('explosion').setDepth(3);
+            explosion.on('animationcomplete', () => explosion.destroy());
+        });
+
+        this.input.on('pointerdown', () => {
+            this.player.fire(this.bullets);
+        });
 
         this.input.keyboard.on('keydown-P', () => {
             this.DEBUG = !this.DEBUG;
@@ -77,5 +103,11 @@ class Map extends Phaser.Scene {
         let pointer = this.input.activePointer;
         let worldPoint = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
         this.player.aimTurretsAt(worldPoint.x, worldPoint.y);
+
+        this.bullets.children.each((bullet) => {
+            if (bullet.active && !this.mapBounds.contains(bullet.x, bullet.y)) {
+                bullet.destroy();
+            }
+        });
     }
 }

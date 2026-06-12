@@ -8,6 +8,7 @@ class Turret extends Phaser.GameObjects.Container {
         this.rotationOffset = config.rotationOffset != null ? config.rotationOffset : SpriteFacing.DOWN;
         this.bulletRotationOffset = config.bulletRotationOffset != null ? config.bulletRotationOffset : SpriteFacing.UP;
         this.angleLimit = config.angleLimit || null;
+        this.bulletSpeed = config.bulletSpeed || 400;
 
         this.sprite = scene.add.image(config.spriteOffsetX || 0, config.spriteOffsetY || 0, config.spriteKey);
         if (config.flipX) this.sprite.setFlipX(true);
@@ -42,5 +43,26 @@ class Turret extends Phaser.GameObjects.Container {
             y: this.y + bx * sin + by * cos,
             rotation: fireRotation
         };
+    }
+
+    fire(bulletGroup) {
+        let pos = this.getFireWorldPosition();
+        let direction = this.rotation - this.rotationOffset;
+
+        let bullet = bulletGroup.create(pos.x, pos.y, this.bulletKey);
+        bullet.setDepth(2);
+        bullet.setRotation(pos.rotation);
+        bullet.setVelocity(Math.cos(direction) * this.bulletSpeed, Math.sin(direction) * this.bulletSpeed);
+        bullet.body.setAllowGravity(false);
+
+        if (this.shotKey) {
+            let flash = this.scene.add.image(pos.x, pos.y, this.shotKey);
+            flash.setDepth(3);
+            flash.setOrigin(0.5, 0);
+            flash.setRotation(this.rotation);
+            this.scene.time.delayedCall(100, () => flash.destroy());
+        }
+
+        return bullet;
     }
 }

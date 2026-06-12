@@ -40,12 +40,24 @@ class Tank extends Phaser.Physics.Arcade.Sprite {
         if (vx !== 0 || vy !== 0) {
             this.setRotation(Math.atan2(vy, vx) + this.rotationOffset);
         }
-        this.setVelocity(vx * this.speed, vy * this.speed);
+        if (this.acceleration) {
+            this.setAcceleration(vx * this.acceleration, vy * this.acceleration);
+            this.body.maxVelocity.setTo(this.speed, this.speed);
+            if (vx === 0 && vy === 0) this.setAcceleration(0, 0);
+        } else {
+            this.setVelocity(vx * this.speed, vy * this.speed);
+        }
     }
 
     aimTurretsAt(worldX, worldY) {
         this.turretEntries.forEach((entry) => {
             entry.turret.aimAt(worldX, worldY, this.rotation, this.x, this.y);
+        });
+    }
+
+    fire(bulletGroup) {
+        this.turretEntries.forEach((entry) => {
+            entry.turret.fire(bulletGroup);
         });
     }
 
