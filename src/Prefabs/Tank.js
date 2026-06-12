@@ -7,7 +7,7 @@ class Tank extends Phaser.Physics.Arcade.Sprite {
         this.health = this.maxHealth;
         this.speed = config.speed || 200;
         this.acceleration = config.acceleration || null;
-        this.rotationOffset = config.rotationOffset != null ? config.rotationOffset : SpriteFacing.DOWN;
+        this.turnSpeed = config.turnSpeed || 80;
         this.turretEntries = [];
 
         scene.add.existing(this);
@@ -36,17 +36,15 @@ class Tank extends Phaser.Physics.Arcade.Sprite {
         return this.turretEntries[index] ? this.turretEntries[index].turret : null;
     }
 
-    move(vx, vy) {
-        if (vx !== 0 || vy !== 0) {
-            this.setRotation(Math.atan2(vy, vx) + this.rotationOffset);
-        }
-        if (this.acceleration) {
-            this.setAcceleration(vx * this.acceleration, vy * this.acceleration);
-            this.body.maxVelocity.setTo(this.speed, this.speed);
-            if (vx === 0 && vy === 0) this.setAcceleration(0, 0);
-        } else {
-            this.setVelocity(vx * this.speed, vy * this.speed);
-        }
+    move(accelInput, turnInput) {
+        this.setAngularVelocity(turnInput * this.turnSpeed);
+
+        let forwardAngle = this.rotation + Math.PI / 2;
+        let currentSpeed = accelInput * this.speed;
+        this.setVelocity(
+            Math.cos(forwardAngle) * currentSpeed,
+            Math.sin(forwardAngle) * currentSpeed
+        );
     }
 
     aimTurretsAt(worldX, worldY) {

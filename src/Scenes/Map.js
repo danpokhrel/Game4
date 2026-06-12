@@ -90,15 +90,15 @@ class Map extends Phaser.Scene {
     }
 
     update() {
-        let vx = 0;
-        let vy = 0;
+        let accel = 0;
+        let turn = 0;
 
-        if (this.cursors.left.isDown || this.wasd.left.isDown) vx -= 1;
-        if (this.cursors.right.isDown || this.wasd.right.isDown) vx += 1;
-        if (this.cursors.up.isDown || this.wasd.up.isDown) vy -= 1;
-        if (this.cursors.down.isDown || this.wasd.down.isDown) vy += 1;
+        if (this.wasd.up.isDown || this.cursors.up.isDown) accel += 1;
+        if (this.wasd.down.isDown || this.cursors.down.isDown) accel -= 1;
+        if (this.wasd.left.isDown || this.cursors.left.isDown) turn -= 1;
+        if (this.wasd.right.isDown || this.cursors.right.isDown) turn += 1;
 
-        this.player.move(vx, vy);
+        this.player.move(accel, turn);
 
         let pointer = this.input.activePointer;
         let worldPoint = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
