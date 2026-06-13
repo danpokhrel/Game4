@@ -8,6 +8,7 @@ class Turret extends Phaser.GameObjects.Container {
         this.rotationOffset = config.rotationOffset != null ? config.rotationOffset : SpriteFacing.DOWN;
         this.bulletRotationOffset = config.bulletRotationOffset != null ? config.bulletRotationOffset : SpriteFacing.UP;
         this.angleLimit = config.angleLimit || null;
+        this.damage = config.damage || 10;
         this.bulletSpeed = (config.bulletSpeed || 400) / 60;
         this.reloadTime = (config.reloadTime || 1) * 1000;
         this.lastFireTime = -Infinity;

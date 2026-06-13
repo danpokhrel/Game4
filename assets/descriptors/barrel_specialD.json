@@ -7,5 +7,6 @@
     "bullet": "bullet_long",
     "shot": "shotRed",
     "bulletSpeed": 200,
-    "reloadTime": 2
+    "reloadTime": 2,
+    "damage": 50
 }

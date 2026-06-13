@@ -7,5 +7,6 @@
     "bullet": "bullet_wide",
     "shot": "shotThin",
     "bulletSpeed": 200,
-    "reloadTime": 1
+    "reloadTime": 1,
+    "damage": 10
 }

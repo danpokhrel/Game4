@@ -23,16 +23,28 @@
 const SpriteFacing = { DOWN: -Math.PI / 2, UP: Math.PI / 2 };
 const WALL_CATEGORY = 0x0001;
 const TANK_CATEGORY = 0x0002;
-const BULLET_CATEGORY = 0x0004;
+const ENEMY_TANK_CATEGORY = 0x0004;
+const BULLET_CATEGORY = 0x0008;
+const ENEMY_DEFS = [
+    { bodyType: 'medium', color: 'red' },
+    { bodyType: 'big', color: 'dark' },
+    { bodyType: 'huge', color: 'dark' },
+    { bodyType: 'large', color: 'dark' }
+];
+const PATH_COLORS = [0xffff00, 0x00ffff, 0xff00ff, 0xff8800];
+const EnemyState = { CHASE: 0, ATTACK: 1 };
 </script>
     <script src="src/Prefabs/Bullet.js"></script>
     <script src="src/Prefabs/Turret.js"></script>
     <script src="src/Prefabs/Tank.js"></script>
+    <script src="src/Prefabs/EnemyAI.js"></script>
     <script src="src/Prefabs/TankBuilder.js"></script>
     <script src="src/Managers/AssetLoader.js"></script>
     <script src="src/Managers/BulletGroup.js"></script>
     <script src="src/Managers/PlayerController.js"></script>
     <script src="src/Managers/TankManager.js"></script>
+    <script src="src/Managers/Pathfinder.js"></script>
+    <script src="src/Managers/EnemyController.js"></script>
     <script src="src/Scenes/Map.js"></script>
     <script src="src/main.js"></script>
 </body>

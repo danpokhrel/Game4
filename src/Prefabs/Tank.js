@@ -17,8 +17,9 @@ class Tank extends Phaser.GameObjects.Sprite {
         });
 
         this.setFixedRotation();
+        this.isEnemy = false;
         this.setCollisionCategory(TANK_CATEGORY);
-        this.setCollidesWith([WALL_CATEGORY, TANK_CATEGORY]);
+        this.setCollidesWith([WALL_CATEGORY, TANK_CATEGORY, ENEMY_TANK_CATEGORY, BULLET_CATEGORY]);
 
         this.setDepth(config.depth || 0);
 
@@ -60,7 +61,15 @@ class Tank extends Phaser.GameObjects.Sprite {
 
     fire(bulletGroup) {
         this.turretEntries.forEach((entry) => {
-            entry.turret.fire(bulletGroup);
+            let bullet = entry.turret.fire(bulletGroup);
+            if (bullet) {
+                bullet.damage = entry.turret.damage;
+                if (this.isEnemy) {
+                    bullet.setCollidesWith([WALL_CATEGORY, TANK_CATEGORY]);
+                } else {
+                    bullet.setCollidesWith([WALL_CATEGORY, ENEMY_TANK_CATEGORY]);
+                }
+            }
         });
     }
 
@@ -97,6 +106,7 @@ class Tank extends Phaser.GameObjects.Sprite {
         this.health -= amount;
         if (this.health <= 0) {
             this.health = 0;
+            this.scene.events.emit('tankdestroyed', this.x, this.y);
             this.destroy();
         }
     }
