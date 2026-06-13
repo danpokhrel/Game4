@@ -1,12 +1,13 @@
 class Tank extends Phaser.GameObjects.Sprite {
+    // Tank prefab — body sprite with Matter physics, turret slots that rotate independently
     constructor(scene, x, y, config) {
         super(scene, x, y, config.bodySpriteKey);
 
         this.config = config;
         this.maxHealth = config.maxHealth || 100;
         this.health = this.maxHealth;
-        this.speed = (config.speed || 100) / 60;
-        this.turnSpeed = this.speed * 2;
+        this.speed = config.speed || 100;
+        this.turnSpeed = this.speed * 2 / 60;
         this.turretEntries = [];
 
         scene.add.existing(this);
@@ -17,7 +18,7 @@ class Tank extends Phaser.GameObjects.Sprite {
         });
 
         this.setFixedRotation();
-        this.isEnemy = false;
+        this.isEnemy = false; // set true by EnemyController for collision filter differentiation
         this.setCollisionCategory(TANK_CATEGORY);
         this.setCollidesWith([WALL_CATEGORY, TANK_CATEGORY, ENEMY_TANK_CATEGORY, BULLET_CATEGORY]);
 
@@ -41,12 +42,13 @@ class Tank extends Phaser.GameObjects.Sprite {
     }
 
     move(accelInput, turnInput) {
+        if (!this.body) return;
         let deltaSec = this.scene.sys.game.loop.delta / 1000;
         let newAngle = this.body.angle + turnInput * this.turnSpeed * deltaSec;
         this.scene.matter.body.setAngle(this.body, newAngle);
 
         let forwardAngle = newAngle + Math.PI / 2;
-        let currentSpeed = accelInput * this.speed;
+        let currentSpeed = accelInput * this.speed * deltaSec;
         this.setVelocity(
             Math.cos(forwardAngle) * currentSpeed,
             Math.sin(forwardAngle) * currentSpeed
@@ -59,6 +61,7 @@ class Tank extends Phaser.GameObjects.Sprite {
         });
     }
 
+    // Fire all turrets — sets bullet collision filters based on whether this is an enemy or player tank
     fire(bulletGroup) {
         this.turretEntries.forEach((entry) => {
             let bullet = entry.turret.fire(bulletGroup);
@@ -73,7 +76,9 @@ class Tank extends Phaser.GameObjects.Sprite {
         });
     }
 
+    // Reposition each turret at its socket offset (rotated with tank body) every frame
     preUpdate(time, delta) {
+        if (!this.body) return;
         super.preUpdate(time, delta);
 
         let cos = Math.cos(this.rotation);
@@ -102,11 +107,12 @@ class Tank extends Phaser.GameObjects.Sprite {
         }
     }
 
+    // Reduce health; emit tankdestroyed event with tank reference when health reaches zero
     damage(amount) {
         this.health -= amount;
         if (this.health <= 0) {
             this.health = 0;
-            this.scene.events.emit('tankdestroyed', this.x, this.y);
+            this.scene.events.emit('tankdestroyed', this.x, this.y, this);
             this.destroy();
         }
     }

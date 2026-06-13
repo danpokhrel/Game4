@@ -1,4 +1,5 @@
 class AssetLoader {
+    // Static preloader — loads tilemap, all tank body/barrel/bullet sprites, explosion animations, destructible sprites
     static preload(scene, playerType, playerColor) {
         scene.load.setPath('./assets/');
         scene.load.image('tileset', 'visual/tileset.png');
@@ -18,5 +19,8 @@ class AssetLoader {
             scene.load.image(`explosion${i}`, `visual/sprites/explosion${i}.png`);
             scene.load.image(`explosionSmoke${i}`, `visual/sprites/explosionSmoke${i}.png`);
         }
+
+        scene.load.image('oilSpill_small', 'visual/sprites/oilSpill_small.png');
+        scene.load.image('oilSpill_large', 'visual/sprites/oilSpill_large.png');
     }
 }

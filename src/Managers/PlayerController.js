@@ -1,4 +1,5 @@
 class PlayerController {
+    // Reads WASD/arrow keys for tank movement, mouse for turret aiming, click for firing
     constructor(scene, tank, bulletGroup) {
         this.scene = scene;
         this.tank = tank;
@@ -12,12 +13,14 @@ class PlayerController {
             right: Phaser.Input.Keyboard.KeyCodes.D
         });
 
-        this.firing = false;
+        this.firing = false; // set true on pointerdown, false on pointerup for continuous fire while held
         scene.input.on('pointerdown', () => { this.firing = true; });
         scene.input.on('pointerup', () => { this.firing = false; });
     }
 
     update() {
+        if (!this.tank || !this.tank.active) return;
+
         let accel = 0;
         let turn = 0;
 

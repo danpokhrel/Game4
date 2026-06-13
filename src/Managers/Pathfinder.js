@@ -1,4 +1,5 @@
 class Pathfinder {
+    // Grid-based A* pathfinding — generates walkability grid from collision shapes, supports 8-directional movement
     constructor(scene, collisionObjects, worldX, worldY, worldWidth, worldHeight, cellSize) {
         this.scene = scene;
         this.cellSize = cellSize;
@@ -9,8 +10,7 @@ class Pathfinder {
         this.grid = [];
         this.gridGraphics = null;
         this.pathGraphics = null;
-
-        this.padding = 22;
+        this.padding = 22; // extra clearance around obstacles for tank body width
         this.generateGrid(collisionObjects);
     }
 
@@ -39,7 +39,9 @@ class Pathfinder {
             } else if (obj.polygon) {
                 let verts = obj.polygon.map(function(v) { return { x: obj.x + v.x, y: obj.y + v.y }; });
                 if (this.pointInExpandedPolygon(x, y, verts)) return true;
-            } else if (!obj.point) {
+            } else if (obj.point) {
+                return;
+            } else {
                 if (x >= obj.x - this.padding && x <= obj.x + obj.width + this.padding &&
                     y >= obj.y - this.padding && y <= obj.y + obj.height + this.padding) {
                     return true;
@@ -105,6 +107,7 @@ class Pathfinder {
         return !this.grid[row][col];
     }
 
+    // A* search from world coordinates to world coordinates; returns simplified waypoint list or null
     findPath(fromX, fromY, toX, toY) {
         let start = this.worldToGrid(fromX, fromY);
         let end = this.worldToGrid(toX, toY);
@@ -236,6 +239,7 @@ class Pathfinder {
         return this.simplifyPath(path);
     }
 
+    // Remove collinear intermediate waypoints to produce a cleaner path for steering
     simplifyPath(path) {
         if (path.length <= 2) return path;
         let result = [path[0]];
@@ -258,6 +262,7 @@ class Pathfinder {
         return result;
     }
 
+    // Bresenham line-of-sight check on the walkability grid between two world positions
     hasLineOfSight(fromX, fromY, toX, toY) {
         let start = this.worldToGrid(fromX, fromY);
         let end = this.worldToGrid(toX, toY);
@@ -280,6 +285,7 @@ class Pathfinder {
         }
     }
 
+    // Octile distance heuristic (diagonal cost = sqrt(2)) for A* with 8-directional movement
     heuristic(col1, row1, col2, row2) {
         let dx = Math.abs(col2 - col1);
         let dy = Math.abs(row2 - row1);
@@ -296,7 +302,7 @@ class Pathfinder {
                 this.gridGraphics = this.scene.add.graphics();
                 this.gridGraphics.setDepth(5);
                 this.drawDebugGrid();
-            }
+    }
             if (!this.pathGraphics) {
                 this.pathGraphics = this.scene.add.graphics();
                 this.pathGraphics.setDepth(6);

@@ -1,4 +1,5 @@
 class EnemyAI {
+    // Per-enemy state machine controlling CHASE (pathfind + follow) and ATTACK (stop + fire) behaviors
     constructor(scene, tank, bulletGroup, pathfinder) {
         this.scene = scene;
         this.tank = tank;
@@ -54,6 +55,7 @@ class EnemyAI {
         }
     }
 
+    // Transition states: CHASE→ATTACK when within attackRange and line-of-sight; ATTACK→CHASE when beyond attackBreakRange or no LOS
     updateState(dist, hasLOS) {
         if (this.state === EnemyState.CHASE) {
             if (dist <= this.attackRange && hasLOS) {
@@ -68,6 +70,7 @@ class EnemyAI {
         }
     }
 
+    // CHASE behavior: recompute pathfinder path periodically, follow waypoints via steerToward, aim turret at player
     updateChase(delta, playerTank) {
         this.pathRecomputeTimer += delta;
         if (this.pathRecomputeTimer >= this.pathRecomputeInterval || !this.path) {
@@ -103,6 +106,7 @@ class EnemyAI {
         this.tank.aimTurretsAt(playerTank.x, playerTank.y);
     }
 
+    // ATTACK behavior: stop moving, aim turret, and fire at player
     updateAttack(playerTank) {
         let { turn } = this.computeSteer(playerTank.x, playerTank.y);
         this.tank.move(0, turn);
@@ -110,6 +114,7 @@ class EnemyAI {
         this.tank.fire(this.bulletGroup);
     }
 
+    // Compute turn and acceleration inputs to steer toward a target angle
     computeSteer(targetX, targetY) {
         let angleToTarget = Math.atan2(targetY - this.tank.y, targetX - this.tank.x);
         let targetBodyAngle = angleToTarget - Math.PI / 2;
@@ -133,6 +138,7 @@ class EnemyAI {
         return { turn, accel };
     }
 
+    // Apply computed steering to tank movement
     steerToward(targetX, targetY) {
         let { turn, accel } = this.computeSteer(targetX, targetY);
         this.tank.move(accel, turn);

@@ -1,4 +1,5 @@
 class Turret extends Phaser.GameObjects.Container {
+    // Independent turret that aims and fires; positioned at socket offset on parent tank each frame
     constructor(scene, x, y, config) {
         super(scene, x, y);
 
@@ -9,9 +10,9 @@ class Turret extends Phaser.GameObjects.Container {
         this.bulletRotationOffset = config.bulletRotationOffset != null ? config.bulletRotationOffset : SpriteFacing.UP;
         this.angleLimit = config.angleLimit || null;
         this.damage = config.damage || 10;
-        this.bulletSpeed = (config.bulletSpeed || 400) / 60;
+        this.bulletSpeed = config.bulletSpeed || 400;
         this.reloadTime = (config.reloadTime || 1) * 1000;
-        this.lastFireTime = -Infinity;
+        this.lastFireTime = -Infinity; // cooldown tracking — prevents firing faster than reloadTime
 
         this.sprite = scene.add.image(config.spriteOffsetX || 0, config.spriteOffsetY || 0, config.spriteKey);
         if (config.flipX) this.sprite.setFlipX(true);
@@ -22,6 +23,7 @@ class Turret extends Phaser.GameObjects.Container {
         scene.add.existing(this);
     }
 
+    // Aim the turret toward a world point, clamped by angleLimit relative to the tank body rotation
     aimAt(worldX, worldY, tankRotation, tankX, tankY) {
         let angle = Phaser.Math.Angle.Between(tankX, tankY, worldX, worldY);
         let targetRotation = angle + this.rotationOffset;
@@ -35,6 +37,7 @@ class Turret extends Phaser.GameObjects.Container {
         this.setRotation(targetRotation);
     }
 
+    // Compute barrel tip world position and bullet rotation for spawning projectiles
     getFireWorldPosition() {
         let cos = Math.cos(this.rotation);
         let sin = Math.sin(this.rotation);
@@ -48,6 +51,7 @@ class Turret extends Phaser.GameObjects.Container {
         };
     }
 
+    // Fire a bullet if cooldown has elapsed; spawns from barrel tip at configured speed
     fire(bulletGroup) {
         let now = this.scene.time.now;
         if (now - this.lastFireTime < this.reloadTime) return null;
@@ -59,11 +63,13 @@ class Turret extends Phaser.GameObjects.Container {
         let bullet = bulletGroup.create(pos.x, pos.y, this.bulletKey);
         bullet.setDepth(2);
         this.scene.matter.body.setAngle(bullet.body, pos.rotation);
-        bullet.setVelocity(Math.cos(direction) * this.bulletSpeed, Math.sin(direction) * this.bulletSpeed);
+        let deltaSec = this.scene.sys.game.loop.delta / 1000;
+        bullet.setVelocity(Math.cos(direction) * this.bulletSpeed * deltaSec, Math.sin(direction) * this.bulletSpeed * deltaSec);
 
+        let turretScene = this.scene;
         this.scene.time.delayedCall(3000, () => {
             if (bullet.active) {
-                this.scene.events.emit('bulletimpact', bullet.x, bullet.y);
+                if (turretScene && turretScene.events) turretScene.events.emit('bulletimpact', bullet.x, bullet.y);
                 bullet.destroy();
             }
         });

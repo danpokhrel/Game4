@@ -1,4 +1,5 @@
 class TankBuilder {
+    // Static helper: chained async preload of body/barrel/bullet descriptors + sprites; build() assembles Tank from cached JSON
     static preload(scene, bodyType, color) {
         let spritePath = 'visual/sprites/tank/';
         let descPath = 'descriptors/';

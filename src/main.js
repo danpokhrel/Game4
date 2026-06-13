@@ -9,7 +9,7 @@ let config = {
             gravity: { x: 0, y: 0 }
         }
     },
-    scene: [Map]
+    scene: [TitleScene, CreditsScene, Map, HUDScene, GameOverScene, PauseOverlay]
 };
 
 let game = new Phaser.Game(config);

@@ -1,4 +1,6 @@
 /.crush
 /.vscode
 /.ignore
+/ignore
 AGENTS.md
+.DS_Store

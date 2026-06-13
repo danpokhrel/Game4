@@ -1,4 +1,5 @@
 class BulletGroup {
+    // Factory/pool for Bullet instances — creates new bullets with Matter physics body
     constructor(scene) {
         this.scene = scene;
         this.bullets = [];
