@@ -154,11 +154,13 @@ class Map extends Phaser.Scene {
         this.events.on('bulletimpact', (x, y) => {
             let explosion = this.add.sprite(x, y, 'explosion1').play('explosion').setDepth(3).setScale(0.8);
             explosion.on('animationcomplete', () => explosion.destroy());
+            if (this.cache.audio.has('explosion')) this.sound.play('explosion', { volume: 0.25 });
         });
 
         this.events.on('tankdestroyed', (x, y, tank) => {
             let explosion = this.add.sprite(x, y, 'explosionSmoke1').play('smokeExplosion').setDepth(3).setScale(1.5);
             explosion.on('animationcomplete', () => explosion.destroy());
+            if (this.cache.audio.has('explosion')) this.sound.play('explosion', { volume: 0.5 });
 
             if (tank && tank.isEnemy) {
                 this.score++;

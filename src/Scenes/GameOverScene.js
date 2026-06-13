@@ -8,6 +8,7 @@ class GameOverScene extends Phaser.Scene {
         this.load.setPath('./assets/');
         this.load.image('goButton', 'visual/ui/Red/button_rectangle_flat.png');
         this.load.image('goButtonHover', 'visual/ui/Green/button_rectangle_flat.png');
+        this.load.audio('uiClick', 'audio/ui/mouseclick1.ogg');
     }
 
     create(data) {
@@ -67,6 +68,9 @@ class GameOverScene extends Phaser.Scene {
             btn.setTexture('goButton');
             text.setColor('#ffffff');
         });
-        btn.on('pointerdown', callback);
+        btn.on('pointerdown', () => {
+            this.sound.play('uiClick');
+            callback();
+        });
     }
 }

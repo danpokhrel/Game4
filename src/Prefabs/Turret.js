@@ -82,6 +82,10 @@ class Turret extends Phaser.GameObjects.Container {
             this.scene.time.delayedCall(100, () => flash.destroy());
         }
 
+        if (this.scene.sound && this.scene.cache.audio.has('shot')) {
+            this.scene.sound.play('shot', { volume: 0.3 });
+        }
+
         return bullet;
     }
 }

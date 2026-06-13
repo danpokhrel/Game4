@@ -8,6 +8,7 @@ class PauseOverlay extends Phaser.Scene {
         this.load.setPath('./assets/');
         this.load.image('pauseButton', 'visual/ui/Grey/button_rectangle_flat.png');
         this.load.image('pauseButtonHover', 'visual/ui/Green/button_rectangle_flat.png');
+        this.load.audio('uiClick', 'audio/ui/mouseclick1.ogg');
     }
 
     create() {
@@ -69,6 +70,9 @@ class PauseOverlay extends Phaser.Scene {
         btn.on('pointerout', () => {
             btn.setTexture('pauseButton');
         });
-        btn.on('pointerdown', callback);
+        btn.on('pointerdown', () => {
+            this.sound.play('uiClick');
+            callback();
+        });
     }
 }

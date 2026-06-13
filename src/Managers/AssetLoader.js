@@ -23,5 +23,9 @@ class AssetLoader {
 
         scene.load.image('oilSpill_small', 'visual/sprites/oilSpill_small.png');
         scene.load.image('oilSpill_large', 'visual/sprites/oilSpill_large.png');
+
+        scene.load.audio('shot', 'audio/combat/shot.wav');
+        scene.load.audio('explosion', 'audio/combat/explosion.wav');
+        scene.load.audio('uiClick', 'audio/ui/mouseclick1.ogg');
     }
 }

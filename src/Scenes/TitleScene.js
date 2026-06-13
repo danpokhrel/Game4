@@ -9,6 +9,7 @@ class TitleScene extends Phaser.Scene {
         this.load.image('titleButton', 'visual/ui/Blue/button_rectangle_flat.png');
         this.load.image('titleButtonHover', 'visual/ui/Green/button_rectangle_flat.png');
         this.load.image('iconPlay', 'visual/ui/Extra/icon_play_dark.png');
+        this.load.audio('uiClick', 'audio/ui/mouseclick1.ogg');
     }
 
     create() {
@@ -73,6 +74,9 @@ class TitleScene extends Phaser.Scene {
             btn.setTexture('titleButton');
             text.setColor('#ffffff');
         });
-        btn.on('pointerdown', callback);
+        btn.on('pointerdown', () => {
+            this.sound.play('uiClick');
+            callback();
+        });
     }
 }

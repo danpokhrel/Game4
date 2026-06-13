@@ -8,6 +8,7 @@ class CreditsScene extends Phaser.Scene {
         this.load.setPath('./assets/');
         this.load.image('creditsButton', 'visual/ui/Grey/button_rectangle_flat.png');
         this.load.image('creditsButtonHover', 'visual/ui/Green/button_rectangle_flat.png');
+        this.load.audio('uiClick', 'audio/ui/mouseclick1.ogg');
     }
 
     create() {
@@ -35,13 +36,18 @@ class CreditsScene extends Phaser.Scene {
             'Assets',
             'Kenney - Top-down Tanks Remastered Pack',
             'Kenney - UI Pack',
-            'Kenney - Impact Audio Pack'
+            '',
+            'Audio',
+            'Kenney - Impact Audio Pack (CC0)',
+            'Heavy Artillery Shot by LilMati (CC0)',
+            'Small Explosion by ryansnook (CC BY-NC 4.0)',
+            'Kenney - UI SFX Set (CC0)'
         ];
 
-        let startY = cy - 110;
+        let startY = cy - 120;
         for (let i = 0; i < credits.length; i++) {
-            let isHeader = credits[i] === 'Developer' || credits[i] === 'Assets';
-            this.add.text(cx, startY + i * 24, credits[i], {
+            let isHeader = credits[i] === 'Developer' || credits[i] === 'Assets' || credits[i] === 'Audio';
+            this.add.text(cx, startY + i * 22, credits[i], {
                 fontFamily: 'Kenney Future Narrow, Arial',
                 fontSize: isHeader ? '22px' : '16px',
                 color: isHeader ? '#ffcc00' : '#cccccc'
@@ -71,6 +77,9 @@ class CreditsScene extends Phaser.Scene {
             btn.setTexture('creditsButton');
             text.setColor('#ffffff');
         });
-        btn.on('pointerdown', callback);
+        btn.on('pointerdown', () => {
+            this.sound.play('uiClick');
+            callback();
+        });
     }
 }
