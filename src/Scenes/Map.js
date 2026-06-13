@@ -56,13 +56,39 @@ class Map extends Phaser.Scene {
     buildColliders(map) {
         let collisionObjects = map.getObjectLayer('Collision').objects;
         collisionObjects.forEach((obj) => {
-            this.matter.add.rectangle(obj.x + obj.width / 2, obj.y + obj.height / 2, obj.width, obj.height, {
+            let cx = obj.x + obj.width / 2;
+            let cy = obj.y + obj.height / 2;
+            let opts = {
                 isStatic: true,
                 collisionFilter: {
                     category: WALL_CATEGORY,
                     mask: TANK_CATEGORY | BULLET_CATEGORY
                 }
-            });
+            };
+
+            if (obj.ellipse) {
+                if (obj.width === obj.height) {
+                    this.matter.add.circle(cx, cy, obj.width / 2, opts);
+                } else {
+                    let verts = [];
+                    let steps = 16;
+                    for (let i = 0; i < steps; i++) {
+                        let angle = (i / steps) * Math.PI * 2;
+                        verts.push({
+                            x: cx + (obj.width / 2) * Math.cos(angle),
+                            y: cy + (obj.height / 2) * Math.sin(angle)
+                        });
+                    }
+                    this.matter.add.fromVertices(cx, cy, verts, opts);
+                }
+            } else if (obj.polygon) {
+                let verts = obj.polygon.map(v => ({ x: obj.x + v.x, y: obj.y + v.y }));
+                this.matter.add.fromVertices(cx, cy, verts, opts);
+            } else if (obj.point) {
+                return;
+            } else {
+                this.matter.add.rectangle(cx, cy, obj.width, obj.height, opts);
+            }
         });
     }
 

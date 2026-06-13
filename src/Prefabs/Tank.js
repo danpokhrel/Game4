@@ -5,8 +5,8 @@ class Tank extends Phaser.GameObjects.Sprite {
         this.config = config;
         this.maxHealth = config.maxHealth || 100;
         this.health = this.maxHealth;
-        this.speed = (config.speed || 200) / 60;
-        this.turnSpeed = Phaser.Math.DegToRad((config.speed || 200) * 0.5);
+        this.speed = (config.speed || 100) / 60;
+        this.turnSpeed = this.speed * 2;
         this.turretEntries = [];
 
         scene.add.existing(this);

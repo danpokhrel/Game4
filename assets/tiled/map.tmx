@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="128" tileheight="128" infinite="1" nextlayerid="5" nextobjectid="9">
+<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="128" tileheight="128" infinite="1" nextlayerid="5" nextobjectid="19">
  <editorsettings>
   <export target="../tilemap.tmj" format="json"/>
  </editorsettings>
@@ -306,12 +306,35 @@
   <object id="1" x="1120" y="928" width="192" height="192"/>
  </objectgroup>
  <objectgroup id="4" name="Collision">
-  <object id="2" x="1280" y="768" width="256" height="128"/>
-  <object id="3" x="1408" y="896" width="128" height="128"/>
-  <object id="4" x="896" y="768" width="128" height="256"/>
-  <object id="5" x="1024" y="768" width="128" height="128"/>
-  <object id="6" x="896" y="1152" width="256" height="128"/>
-  <object id="7" x="1280" y="1152" width="256" height="128"/>
-  <object id="8" x="1664" y="512" width="224" height="1408"/>
+  <object id="9" x="896" y="768" width="128" height="128">
+   <ellipse/>
+  </object>
+  <object id="10" x="1024" y="768" width="128" height="128">
+   <ellipse/>
+  </object>
+  <object id="11" x="896" y="896" width="128" height="128">
+   <ellipse/>
+  </object>
+  <object id="12" x="896" y="1152" width="128" height="128">
+   <ellipse/>
+  </object>
+  <object id="13" x="1024" y="1152" width="128" height="128">
+   <ellipse/>
+  </object>
+  <object id="14" x="1280" y="1152" width="128" height="128">
+   <ellipse/>
+  </object>
+  <object id="15" x="1408" y="1152" width="128" height="128">
+   <ellipse/>
+  </object>
+  <object id="16" x="1408" y="896" width="128" height="128">
+   <ellipse/>
+  </object>
+  <object id="17" x="1408" y="768" width="128" height="128">
+   <ellipse/>
+  </object>
+  <object id="18" x="1280" y="768" width="128" height="128">
+   <ellipse/>
+  </object>
  </objectgroup>
 </map>
