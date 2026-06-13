@@ -6,6 +6,6 @@
     "angleLimit": 10,
     "bullet": "bullet_long",
     "shot": "shotRed",
-    "bulletSpeed": 400,
+    "bulletSpeed": 200,
     "reloadTime": 2
 }

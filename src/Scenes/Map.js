@@ -17,7 +17,7 @@ class Map extends Phaser.Scene {
 
         this.mapBounds = new Phaser.Geom.Rectangle(0, 0, map.widthInPixels, map.heightInPixels);
 
-        this.colliders = this.buildColliders(map);
+        this.buildColliders(map);
 
         this.anims.create({
             key: 'explosion',
@@ -32,7 +32,9 @@ class Map extends Phaser.Scene {
         });
 
         this.bulletGroup = new BulletGroup(this);
-        this.tankManager = new TankManager(this, this.colliders, this.bulletGroup);
+        this.setupBulletWallCollision();
+
+        this.tankManager = new TankManager(this, this.bulletGroup);
 
         let spawnLayer = map.getObjectLayer('PlayerSpawn');
         let spawnObj = spawnLayer.objects[0];
@@ -53,27 +55,52 @@ class Map extends Phaser.Scene {
 
     buildColliders(map) {
         let collisionObjects = map.getObjectLayer('Collision').objects;
-        let colliders = this.physics.add.staticGroup();
         collisionObjects.forEach((obj) => {
-            let rect = this.add.rectangle(obj.x + obj.width / 2, obj.y + obj.height / 2, obj.width, obj.height);
-            this.physics.add.existing(rect, true);
-            colliders.add(rect);
-            rect.setVisible(false);
+            this.matter.add.rectangle(obj.x + obj.width / 2, obj.y + obj.height / 2, obj.width, obj.height, {
+                isStatic: true,
+                collisionFilter: {
+                    category: WALL_CATEGORY,
+                    mask: TANK_CATEGORY | BULLET_CATEGORY
+                }
+            });
         });
-        return colliders;
+    }
+
+    setupBulletWallCollision() {
+        this.matter.world.on('collisionstart', (event) => {
+            for (let i = 0; i < event.pairs.length; i++) {
+                let pair = event.pairs[i];
+                let bodyA = pair.bodyA;
+                let bodyB = pair.bodyB;
+
+                let bullet = null;
+                if (bodyA.gameObject && bodyA.gameObject instanceof Bullet) {
+                    bullet = bodyA.gameObject;
+                } else if (bodyB.gameObject && bodyB.gameObject instanceof Bullet) {
+                    bullet = bodyB.gameObject;
+                }
+
+                if (bullet && bullet.active) {
+                    let x = bullet.x;
+                    let y = bullet.y;
+                    bullet.destroy();
+                    this.events.emit('bulletimpact', x, y);
+                }
+            }
+        });
     }
 
     setupDebug() {
         this.input.keyboard.on('keydown-P', () => {
             this.DEBUG = !this.DEBUG;
-            this.physics.world.drawDebug = this.DEBUG;
-            this.physics.world.debugGraphic.clear();
-            this.physics.world.debugGraphic.setVisible(this.DEBUG);
+            this.matter.world.drawDebug = this.DEBUG;
+            if (!this.DEBUG) this.matter.world.debugGraphic.clear();
+            this.matter.world.debugGraphic.setVisible(this.DEBUG);
             this.tankManager.getPlayer().setDebug(this.DEBUG);
         });
 
-        this.physics.world.drawDebug = false;
-        this.physics.world.debugGraphic.setVisible(false);
+        this.matter.world.drawDebug = false;
+        this.matter.world.debugGraphic.setVisible(false);
     }
 
     setupCamera(target, x, y) {

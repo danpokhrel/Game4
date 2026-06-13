@@ -1,24 +1,23 @@
 class BulletGroup {
     constructor(scene) {
         this.scene = scene;
-        this.group = scene.physics.add.group({ allowGravity: false });
+        this.bullets = [];
     }
 
-    fire(x, y, key, rotation, direction, speed, depth) {
-        let bullet = this.group.create(x, y, key);
-        bullet.setDepth(depth || 2);
-        bullet.setRotation(rotation);
-        bullet.setVelocity(Math.cos(direction) * speed, Math.sin(direction) * speed);
-        bullet.body.setAllowGravity(false);
+    create(x, y, key) {
+        let bullet = new Bullet(this.scene, x, y, key);
+        this.bullets.push(bullet);
         return bullet;
     }
 
-    addWallCollider(colliders) {
-        this.scene.physics.add.collider(this.group, colliders, (bullet) => {
-            let x = bullet.x;
-            let y = bullet.y;
-            bullet.destroy();
-            this.scene.events.emit('bulletimpact', x, y);
-        });
+    fire(x, y, key, rotation, direction, speed, depth) {
+        let bullet = this.create(x, y, key);
+        bullet.setDepth(depth || 2);
+        this.scene.matter.body.setAngle(bullet.body, rotation);
+        bullet.setVelocity(Math.cos(direction) * speed / 60, Math.sin(direction) * speed / 60);
+        return bullet;
+    }
+
+    addWallCollider() {
     }
 }

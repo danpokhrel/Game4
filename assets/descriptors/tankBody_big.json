@@ -1,5 +1,5 @@
 {
-    "maxSpeed": 200,
+    "maxSpeed": 100,
     "maxHealth": 200,
     "turrets": [
         {

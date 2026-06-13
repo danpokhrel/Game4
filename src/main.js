@@ -3,9 +3,10 @@ let config = {
     width: 1600,
     height: 1200,
     physics: {
-        default: 'arcade',
-        arcade: {
-            debug: true
+        default: 'matter',
+        matter: {
+            debug: true,
+            gravity: { x: 0, y: 0 }
         }
     },
     scene: [Map]

@@ -1,23 +1,26 @@
-class Tank extends Phaser.Physics.Arcade.Sprite {
+class Tank extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, config) {
         super(scene, x, y, config.bodySpriteKey);
 
         this.config = config;
         this.maxHealth = config.maxHealth || 100;
         this.health = this.maxHealth;
-        this.speed = config.speed || 200;
-        this.acceleration = config.acceleration || null;
-        this.turnSpeed = this.speed * 0.5;
+        this.speed = (config.speed || 200) / 60;
+        this.turnSpeed = Phaser.Math.DegToRad((config.speed || 200) * 0.5);
         this.turretEntries = [];
 
         scene.add.existing(this);
-        scene.physics.add.existing(this);
+        scene.matter.add.gameObject(this, {
+            frictionAir: 0,
+            friction: 0,
+            restitution: 0.1
+        });
 
-        this.setCollideWorldBounds(false);
+        this.setFixedRotation();
+        this.setCollisionCategory(TANK_CATEGORY);
+        this.setCollidesWith([WALL_CATEGORY, TANK_CATEGORY]);
+
         this.setDepth(config.depth || 0);
-
-        let colSide = Math.round(Math.min(this.displayWidth, this.displayHeight) * 0.9);
-        this.body.setSize(colSide, colSide, true);
 
         if (config.turretSlots) {
             config.turretSlots.forEach((slot) => {
@@ -37,9 +40,11 @@ class Tank extends Phaser.Physics.Arcade.Sprite {
     }
 
     move(accelInput, turnInput) {
-        this.setAngularVelocity(turnInput * this.turnSpeed);
+        let deltaSec = this.scene.sys.game.loop.delta / 1000;
+        let newAngle = this.body.angle + turnInput * this.turnSpeed * deltaSec;
+        this.scene.matter.body.setAngle(this.body, newAngle);
 
-        let forwardAngle = this.rotation + Math.PI / 2;
+        let forwardAngle = newAngle + Math.PI / 2;
         let currentSpeed = accelInput * this.speed;
         this.setVelocity(
             Math.cos(forwardAngle) * currentSpeed,
@@ -111,6 +116,10 @@ class Tank extends Phaser.Physics.Arcade.Sprite {
         if (this.debugGraphics) this.debugGraphics.destroy();
         this.turretEntries.forEach((entry) => entry.turret.destroy(fromScene));
         this.turretEntries = [];
+        if (this.body) {
+            this.world.remove(this.body, true);
+            this.body.gameObject = null;
+        }
         super.destroy(fromScene);
     }
 }

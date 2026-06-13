@@ -19,7 +19,12 @@
 
 <body>
     <script src="lib/phaser.js"></script>
-    <script>const SpriteFacing = { DOWN: -Math.PI / 2, UP: Math.PI / 2 };</script>
+    <script>
+const SpriteFacing = { DOWN: -Math.PI / 2, UP: Math.PI / 2 };
+const WALL_CATEGORY = 0x0001;
+const TANK_CATEGORY = 0x0002;
+const BULLET_CATEGORY = 0x0004;
+</script>
     <script src="src/Prefabs/Bullet.js"></script>
     <script src="src/Prefabs/Turret.js"></script>
     <script src="src/Prefabs/Tank.js"></script>

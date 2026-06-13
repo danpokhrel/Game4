@@ -8,7 +8,7 @@ class Turret extends Phaser.GameObjects.Container {
         this.rotationOffset = config.rotationOffset != null ? config.rotationOffset : SpriteFacing.DOWN;
         this.bulletRotationOffset = config.bulletRotationOffset != null ? config.bulletRotationOffset : SpriteFacing.UP;
         this.angleLimit = config.angleLimit || null;
-        this.bulletSpeed = config.bulletSpeed || 400;
+        this.bulletSpeed = (config.bulletSpeed || 400) / 60;
         this.reloadTime = (config.reloadTime || 1) * 1000;
         this.lastFireTime = -Infinity;
 
@@ -55,11 +55,10 @@ class Turret extends Phaser.GameObjects.Container {
         let pos = this.getFireWorldPosition();
         let direction = this.rotation - this.rotationOffset;
 
-        let bullet = bulletGroup.group.create(pos.x, pos.y, this.bulletKey);
+        let bullet = bulletGroup.create(pos.x, pos.y, this.bulletKey);
         bullet.setDepth(2);
-        bullet.setRotation(pos.rotation);
+        this.scene.matter.body.setAngle(bullet.body, pos.rotation);
         bullet.setVelocity(Math.cos(direction) * this.bulletSpeed, Math.sin(direction) * this.bulletSpeed);
-        bullet.body.setAllowGravity(false);
 
         this.scene.time.delayedCall(3000, () => {
             if (bullet.active) {

@@ -6,6 +6,6 @@
     "angleLimit": 60,
     "bullet": "bullet_standard",
     "shot": "shotThin",
-    "bulletSpeed": 600,
+    "bulletSpeed": 300,
     "reloadTime": 0.4
 }

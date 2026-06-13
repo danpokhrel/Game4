@@ -1,15 +1,12 @@
 class TankManager {
-    constructor(scene, colliders, bulletGroup) {
+    constructor(scene, bulletGroup) {
         this.scene = scene;
-        this.colliders = colliders;
         this.bulletGroup = bulletGroup;
         this.tanks = [];
     }
 
     addTank(tank) {
         this.tanks.push(tank);
-        this.scene.physics.add.collider(tank, this.colliders);
-        this.bulletGroup.addWallCollider(this.colliders);
         return tank;
     }
 
