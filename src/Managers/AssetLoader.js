@@ -3,6 +3,7 @@ class AssetLoader {
     static preload(scene, playerType, playerColor) {
         scene.load.setPath('./assets/');
         scene.load.image('tileset', 'visual/tileset.png');
+        scene.load.spritesheet('tilesetSprites', 'visual/tileset.png', { frameWidth: 128, frameHeight: 128 });
         scene.load.tilemapTiledJSON('tilemap', 'tilemap.tmj');
         scene.load.json('tilemapData', 'tilemap.tmj');
 

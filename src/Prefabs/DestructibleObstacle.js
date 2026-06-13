@@ -1,14 +1,27 @@
 class DestructibleObstacle extends Phaser.GameObjects.Sprite {
-    // Destructible barrel/crate — takes bullet damage, fades on hit, explodes when destroyed
-    constructor(scene, x, y, key, config) {
-        super(scene, x, y, key);
+    // Destructible obstacle — takes bullet damage, fades on hit, explodes when destroyed
+    constructor(scene, x, y, key, frame, config) {
+        super(scene, x, y, key, frame);
 
-        this.maxHealth = config.maxHealth || 30;
+        this.maxHealth = config.maxHealth || 1;
         this.health = this.maxHealth;
         this.setDepth(config.depth || 0);
+        this.setOrigin(0.5);
+
+        if (config.rotation) {
+            this.rotation = config.rotation;
+        }
+
+        let bodyWidth = config.bodyWidth || 64;
+        let bodyHeight = config.bodyHeight || 64;
 
         scene.add.existing(this);
         scene.matter.add.gameObject(this, {
+            shape: {
+                type: 'rectangle',
+                width: bodyWidth,
+                height: bodyHeight
+            },
             isStatic: true,
             collisionFilter: {
                 category: WALL_CATEGORY,
@@ -20,7 +33,6 @@ class DestructibleObstacle extends Phaser.GameObjects.Sprite {
         this.setCollidesWith([TANK_CATEGORY, ENEMY_TANK_CATEGORY, BULLET_CATEGORY]);
     }
 
-    // Reduce health and fade; emit obstacleDestroyed and remove when health reaches zero
     damage(amount) {
         this.health -= amount;
         if (this.health <= 0) {

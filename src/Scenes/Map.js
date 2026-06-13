@@ -35,6 +35,7 @@ class Map extends Phaser.Scene {
         this.setupBulletCollisions();
         this.setupPlayer();
         this.setupEnemies();
+        this.setupObstacles();
         this.setupPause();
         this.setupDebug();
         this.setupCamera(this.playerTank);
@@ -61,7 +62,7 @@ class Map extends Phaser.Scene {
         map.createLayer('Foreground', tileset);
 
         let tmjData = this.cache.json.get('tilemapData');
-        let groundLayerDef = tmjData.layers.find(function(l) { return l.name === 'Ground'; });
+        let groundLayerDef = tmjData.layers.find(function (l) { return l.name === 'Ground'; });
         let chunks = groundLayerDef.chunks;
         let minTileX = Infinity, minTileY = Infinity;
         let maxTileX = -Infinity, maxTileY = -Infinity;
@@ -122,7 +123,12 @@ class Map extends Phaser.Scene {
 
     // Initialize A* pathfinder grid from collision shapes for enemy navigation
     setupPathfinder() {
-        this.pathfinder = new Pathfinder(this, this.collisionObjects, this.worldX, this.worldY, this.worldWidth, this.worldHeight, 128);
+        let pathObjects = this.collisionObjects.slice();
+        let indestructLayer = this.tilemap.getObjectLayer('Indestructibles');
+        if (indestructLayer) {
+            indestructLayer.objects.forEach((obj) => { pathObjects.push(obj); });
+        }
+        this.pathfinder = new Pathfinder(this, pathObjects, this.worldX, this.worldY, this.worldWidth, this.worldHeight, 128);
     }
 
     // Define explosion sprite animations and event handlers for bullet/tank/obstacle destruction effects
@@ -163,10 +169,7 @@ class Map extends Phaser.Scene {
             }
         });
 
-        this.events.on('obstacleDestroyed', (x, y) => {
-            let explosion = this.add.sprite(x, y, 'explosion1').play('explosion').setDepth(3).setScale(0.6);
-            explosion.on('animationcomplete', () => explosion.destroy());
-        });
+        this.events.on('obstacleDestroyed', () => {});
     }
 
     // Matter collision callback — detect bullet hits on tanks (damage + flash + shake) and destructible obstacles
@@ -235,7 +238,7 @@ class Map extends Phaser.Scene {
     setupEnemies() {
         this.enemyController = new EnemyController(this, this.tankManager, this.bulletGroup, this.pathfinder);
 
-        let enemySpawnLayer = this.tilemap.getObjectLayer('enemySpawn');
+        let enemySpawnLayer = this.tilemap.getObjectLayer('EnemySpawn');
         let spawnAreas = enemySpawnLayer.objects.map(obj => ({
             x: obj.x,
             y: obj.y,
@@ -244,6 +247,54 @@ class Map extends Phaser.Scene {
         }));
 
         this.waveManager = new WaveManager(this, this.enemyController, spawnAreas);
+    }
+
+    // Create destructible and indestructible obstacle objects from tilemap object layers
+    setupObstacles() {
+        let FIRST_GID = 1;
+
+        this.destructibles = [];
+        let destructLayer = this.tilemap.getObjectLayer('Destructibles');
+        if (destructLayer) {
+            destructLayer.objects.forEach((obj) => {
+                let frame = (obj.gid || 0) - FIRST_GID;
+                let cx = obj.x + obj.width / 2;
+                let cy = obj.y + obj.height / 2;
+                let obstacle = new DestructibleObstacle(this, cx, cy, 'tilesetSprites', frame, {
+                    maxHealth: 1,
+                    depth: 0,
+                    rotation: Phaser.Math.DegToRad(obj.rotation || 0)
+                });
+                this.destructibles.push(obstacle);
+            });
+        }
+
+        this.indestructibles = [];
+        let indestructLayer = this.tilemap.getObjectLayer('Indestructibles');
+        if (indestructLayer) {
+            indestructLayer.objects.forEach((obj) => {
+                let frame = (obj.gid || 0) - FIRST_GID;
+                let cx = obj.x + obj.width / 2;
+                let cy = obj.y + obj.height / 2;
+                let rotRad = Phaser.Math.DegToRad(obj.rotation || 0);
+
+                let sprite = this.add.image(cx, cy, 'tilesetSprites', frame);
+                sprite.setOrigin(0.5);
+                sprite.setRotation(rotRad);
+                sprite.setDepth(0);
+
+                this.matter.add.rectangle(cx, cy, obj.width, obj.height, {
+                    isStatic: true,
+                    angle: rotRad,
+                    collisionFilter: {
+                        category: WALL_CATEGORY,
+                        mask: TANK_CATEGORY | ENEMY_TANK_CATEGORY | BULLET_CATEGORY
+                    }
+                });
+
+                this.indestructibles.push(sprite);
+            });
+        }
     }
 
     // ESC key pauses game scene and HUD, launches PauseOverlay for resume/restart/quit
@@ -291,7 +342,7 @@ class Map extends Phaser.Scene {
     setupCamera(target) {
         let TILE_SIZE = 128;
         let cameraWorldWidth = 16 * TILE_SIZE;
-        let zoom = this.cameras.main.width / cameraWorldWidth;
+        let zoom = this.cameras.main.width / cameraWorldWidth * 0.8;
         this.cameras.main.setZoom(zoom);
         this.cameras.main.startFollow(target, true, 0.1, 0.1);
         this.cameras.main.centerOn(target.x, target.y);
